@@ -1,3 +1,5 @@
+GIF89a
+
 <?php
 /* GIF89a */
 
